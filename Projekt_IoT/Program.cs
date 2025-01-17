@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Devices.Client;
+using Microsoft.Azure.Devices.Shared;
 using Newtonsoft.Json;
 using Opc.UaFx.Client;
 using System.Text;
@@ -68,10 +69,77 @@ public class ProductionLine
 
             await IoTHubClient.SendEventAsync(message);
             Console.WriteLine($"Wysłano dane dla {Name}: {jsonPayload}");
+
+            await UpdateProductionRateAsync();
+            await UpdateDeviceErrorAsync();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Błąd podczas wysyłania danych z {Name}: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateProductionRateAsync()
+    {
+        Console.WriteLine("Aktualizaca Production Rate...");
+        try
+        {
+            var twin = await IoTHubClient.GetTwinAsync();
+            var desiredProductionRateLong = twin.Properties.Desired["ProductionRate"]?.Value;
+            var desiredProductionRate = Convert.ToInt32(desiredProductionRateLong);
+
+            if (desiredProductionRate == null)
+            {
+                Console.WriteLine("Oczekiwany Production Rate jest null lub niepoprawny.");
+                return;
+            } 
+
+            Console.WriteLine($"Oczekiwany Production Rate: {desiredProductionRate}");
+
+            OpcClient.WriteNode($"{OpcNode}/ProductionRate", desiredProductionRate);
+            Console.WriteLine($"Aktualizuję ProductionRate na: {desiredProductionRate}");
+
+            var reportedPR = OpcClient.ReadNode($"{OpcNode}/ProductionRate").Value;
+            var reportedProperties = new TwinCollection { ["ProductionRate"] = reportedPR };
+            await IoTHubClient.UpdateReportedPropertiesAsync(reportedProperties);
+            Console.WriteLine($"Raportowany PR to {reportedPR}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd {ex.Message}");
+        }
+    }
+
+    private async Task UpdateDeviceErrorAsync()
+    {
+        Console.WriteLine("Aktualizacja błędów...");
+        try
+        {
+            var workorderNode = OpcClient.ReadNode($"{OpcNode}/WorkorderId");
+            var deviceErrorsNode = OpcClient.ReadNode($"{OpcNode}/DeviceError");
+            var workorderID = workorderNode.Value?.ToString();
+            var deviceErrors = deviceErrorsNode.Value as int?;
+
+            if (!deviceErrors.HasValue)
+            {
+                Console.WriteLine($"Brak błędów urządzenia: {workorderID}");
+                return;
+            }
+
+            var errorEvent = new {
+                WorkorderID = workorderID,
+                DeviceErrors = deviceErrors
+            };
+            var errorMessage = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(errorEvent)));
+            await IoTHubClient.SendEventAsync(errorMessage);
+
+            var reportedErr = new TwinCollection { ["DeviceError"] = deviceErrors};
+            await IoTHubClient.UpdateReportedPropertiesAsync(reportedErr);
+            Console.WriteLine($"Raportowane błędy to {deviceErrors}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd przy aktualizacji: {ex.Message}");
         }
     }
 
