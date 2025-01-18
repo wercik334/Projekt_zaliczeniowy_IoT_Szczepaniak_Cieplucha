@@ -92,7 +92,7 @@ public class ProductionLine
             {
                 Console.WriteLine("Oczekiwany Production Rate jest null lub niepoprawny.");
                 return;
-            }
+            } 
 
             Console.WriteLine($"Oczekiwany Production Rate: {desiredProductionRate}");
 
@@ -126,15 +126,14 @@ public class ProductionLine
                 return;
             }
 
-            var errorEvent = new
-            {
+            var errorEvent = new {
                 WorkorderID = workorderID,
                 DeviceErrors = deviceErrors
             };
             var errorMessage = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(errorEvent)));
             await IoTHubClient.SendEventAsync(errorMessage);
 
-            var reportedErr = new TwinCollection { ["DeviceError"] = deviceErrors };
+            var reportedErr = new TwinCollection { ["DeviceError"] = deviceErrors};
             await IoTHubClient.UpdateReportedPropertiesAsync(reportedErr);
             Console.WriteLine($"Raportowane błędy to {deviceErrors}");
         }
