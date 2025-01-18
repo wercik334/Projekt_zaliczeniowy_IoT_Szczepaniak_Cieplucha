@@ -31,6 +31,8 @@ public class ProductionLine
             Console.WriteLine($"Błąd połączenia z OPC UA: {ex.Message}");
         }
         IoTHubClient = DeviceClient.CreateFromConnectionString(connectionString);
+
+        IoTHubClient.SetMethodHandlerAsync("EmergencyStop", HandleEmergencyStopAsync, null).Wait();
     }
 
     public async Task SendTelemetryDataAsync()
@@ -92,7 +94,7 @@ public class ProductionLine
             {
                 Console.WriteLine("Oczekiwany Production Rate jest null lub niepoprawny.");
                 return;
-            } 
+            }
 
             Console.WriteLine($"Oczekiwany Production Rate: {desiredProductionRate}");
 
@@ -126,12 +128,14 @@ public class ProductionLine
                 return;
             }
 
+
             var errorEvent = new {
                 WorkorderID = workorderID,
                 DeviceErrors = deviceErrors
             };
             var errorMessage = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(errorEvent)));
             await IoTHubClient.SendEventAsync(errorMessage);
+
 
             var reportedErr = new TwinCollection { ["DeviceError"] = deviceErrors};
             await IoTHubClient.UpdateReportedPropertiesAsync(reportedErr);
@@ -140,6 +144,22 @@ public class ProductionLine
         catch (Exception ex)
         {
             Console.WriteLine($"Błąd przy aktualizacji: {ex.Message}");
+        }
+    }
+
+    public Task<MethodResponse> HandleEmergencyStopAsync(MethodRequest? methodRequest, object? userContext)
+    {
+        Console.WriteLine("Rozpoczynam obsługę Emergency Stop...");
+        try
+        {
+            OpcClient.CallMethod($"{OpcNode}", $"{OpcNode}/EmergencyStop");
+            Console.WriteLine($"Emergency Stop zastosowany dla: {Name}");
+            return Task.FromResult(new MethodResponse(200));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during Emergency Stop: {ex.Message}");
+            return Task.FromResult(new MethodResponse(500));
         }
     }
 
