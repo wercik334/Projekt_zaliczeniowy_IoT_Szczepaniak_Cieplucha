@@ -48,3 +48,4 @@ C:\Users\werci\source\repos\Projekt_IoT\Projekt_IoT\obj\Debug\net8.0\refint\Proj
 C:\Users\werci\source\repos\Projekt_IoT\Projekt_IoT\obj\Debug\net8.0\Projekt_IoT.pdb
 C:\Users\werci\source\repos\Projekt_IoT\Projekt_IoT\obj\Debug\net8.0\Projekt_IoT.genruntimeconfig.cache
 C:\Users\werci\source\repos\Projekt_IoT\Projekt_IoT\obj\Debug\net8.0\ref\Projekt_IoT.dll
+C:\Users\werci\source\repos\Projekt_IoT\Projekt_IoT\obj\Debug\net8.0\Projekt_IoT.sourcelink.json
