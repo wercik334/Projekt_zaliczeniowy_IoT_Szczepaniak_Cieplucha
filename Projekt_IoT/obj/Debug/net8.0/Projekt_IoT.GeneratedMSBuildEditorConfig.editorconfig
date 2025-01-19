@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Projekt_IoT
-build_property.ProjectDir = C:\Users\werci\source\repos\Projekt_IoT\Projekt_IoT\
+build_property.ProjectDir = C:\Users\Dell\Downloads\Projekt_zaliczeniowy_IoT_Szczepaniak_Cieplucha\Projekt_IoT\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

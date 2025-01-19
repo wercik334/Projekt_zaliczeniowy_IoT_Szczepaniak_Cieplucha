@@ -33,6 +33,7 @@ public class ProductionLine
         IoTHubClient = DeviceClient.CreateFromConnectionString(connectionString);
 
         IoTHubClient.SetMethodHandlerAsync("EmergencyStop", HandleEmergencyStopAsync, null).Wait();
+        IoTHubClient.SetMethodHandlerAsync("ResetErrorStatus", HandleResetErrorStatusAsync, null).Wait();
     }
 
     public async Task SendTelemetryDataAsync()
@@ -158,7 +159,23 @@ public class ProductionLine
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error during Emergency Stop: {ex.Message}");
+            Console.WriteLine($"Błąd przy wywołaniu Emergency Stop: {ex.Message}");
+            return Task.FromResult(new MethodResponse(500));
+        }
+    }
+
+    private Task<MethodResponse> HandleResetErrorStatusAsync(MethodRequest methodRequest, object userContext)
+    {
+        Console.WriteLine("Rozpoczynam obsługę Reset Error Status...");
+        try
+        {
+            OpcClient.CallMethod($"{OpcNode}", $"{OpcNode}/ResetErrorStatus");
+            Console.WriteLine($"Reset Error Status zastosowany dla: {Name}");
+            return Task.FromResult(new MethodResponse(200));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during Reset Error Status: {ex.Message}");
             return Task.FromResult(new MethodResponse(500));
         }
     }

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\werci\\source\\repos\\Projekt_IoT\\Projekt_IoT\\Projekt_IoT.csproj": {}
+    "C:\\Users\\Dell\\Downloads\\Projekt_zaliczeniowy_IoT_Szczepaniak_Cieplucha\\Projekt_IoT\\Projekt_IoT.csproj": {}
   },
   "projects": {
-    "C:\\Users\\werci\\source\\repos\\Projekt_IoT\\Projekt_IoT\\Projekt_IoT.csproj": {
+    "C:\\Users\\Dell\\Downloads\\Projekt_zaliczeniowy_IoT_Szczepaniak_Cieplucha\\Projekt_IoT\\Projekt_IoT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\werci\\source\\repos\\Projekt_IoT\\Projekt_IoT\\Projekt_IoT.csproj",
+        "projectUniqueName": "C:\\Users\\Dell\\Downloads\\Projekt_zaliczeniowy_IoT_Szczepaniak_Cieplucha\\Projekt_IoT\\Projekt_IoT.csproj",
         "projectName": "Projekt_IoT",
-        "projectPath": "C:\\Users\\werci\\source\\repos\\Projekt_IoT\\Projekt_IoT\\Projekt_IoT.csproj",
-        "packagesPath": "C:\\Users\\werci\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\werci\\source\\repos\\Projekt_IoT\\Projekt_IoT\\obj\\",
+        "projectPath": "C:\\Users\\Dell\\Downloads\\Projekt_zaliczeniowy_IoT_Szczepaniak_Cieplucha\\Projekt_IoT\\Projekt_IoT.csproj",
+        "packagesPath": "C:\\Users\\Dell\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Dell\\Downloads\\Projekt_zaliczeniowy_IoT_Szczepaniak_Cieplucha\\Projekt_IoT\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\werci\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
