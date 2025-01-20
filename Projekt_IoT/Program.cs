@@ -75,6 +75,7 @@ public class ProductionLine
 
             await UpdateProductionRateAsync();
             await UpdateDeviceErrorAsync();
+            await UpdateWorkorderIdInDeviceTwinAsync(workorderID);
         }
         catch (Exception ex)
         {
@@ -131,9 +132,9 @@ public class ProductionLine
                 return;
             }
 
-            if(_lastReportedDeviceErrors != deviceErrors)
+            if (_lastReportedDeviceErrors != deviceErrors)
             {
-                var errorEvent = new 
+                var errorEvent = new
                 {
                     WorkorderID = workorderID,
                     DeviceErrors = deviceErrors
@@ -143,13 +144,31 @@ public class ProductionLine
                 _lastReportedDeviceErrors = deviceErrors;
             }
 
-            var reportedErr = new TwinCollection { ["DeviceError"] = deviceErrors};
+            var reportedErr = new TwinCollection { ["DeviceError"] = deviceErrors };
             await IoTHubClient.UpdateReportedPropertiesAsync(reportedErr);
             Console.WriteLine($"Raportowane błędy to {deviceErrors}");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Błąd przy aktualizacji: {ex.Message}");
+        }
+    }
+    public async Task UpdateWorkorderIdInDeviceTwinAsync(string workorderId)
+    {
+        try
+        {
+            var twin = await IoTHubClient.GetTwinAsync();
+
+            var twinPatch = new TwinCollection();
+            twinPatch["workorderId"] = workorderId;
+
+            await IoTHubClient.UpdateReportedPropertiesAsync(twinPatch);
+
+            Console.WriteLine($"Aktualizacja {DeviceId} z workorderId: {workorderId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd w aktualizacji Device Twin dla {DeviceId}: {ex.Message}");
         }
     }
 
