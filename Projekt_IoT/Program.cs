@@ -113,6 +113,8 @@ public class ProductionLine
         }
     }
 
+    private int? _lastReportedDeviceErrors = 0;
+
     private async Task UpdateDeviceErrorAsync()
     {
         Console.WriteLine("Aktualizacja błędów...");
@@ -129,14 +131,17 @@ public class ProductionLine
                 return;
             }
 
-
-            var errorEvent = new {
-                WorkorderID = workorderID,
-                DeviceErrors = deviceErrors
-            };
-            var errorMessage = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(errorEvent)));
-            await IoTHubClient.SendEventAsync(errorMessage);
-
+            if(_lastReportedDeviceErrors != deviceErrors)
+            {
+                var errorEvent = new 
+                {
+                    WorkorderID = workorderID,
+                    DeviceErrors = deviceErrors
+                };
+                var errorMessage = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(errorEvent)));
+                await IoTHubClient.SendEventAsync(errorMessage);
+                _lastReportedDeviceErrors = deviceErrors;
+            }
 
             var reportedErr = new TwinCollection { ["DeviceError"] = deviceErrors};
             await IoTHubClient.UpdateReportedPropertiesAsync(reportedErr);
@@ -175,7 +180,7 @@ public class ProductionLine
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error during Reset Error Status: {ex.Message}");
+            Console.WriteLine($"Błąd przy wywołaniu Reset Error Status: {ex.Message}");
             return Task.FromResult(new MethodResponse(500));
         }
     }
